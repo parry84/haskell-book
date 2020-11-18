@@ -3,5 +3,5 @@ let
 in import "${pkgs.ihaskell}/release.nix" {
   compiler = "ghc865";
   nixpkgs = import pkgs.nixpkgs {};
-  packages = self: with self; [ hspec QuickCheck checkers ];
+  packages = self: with self; [ hspec QuickCheck checkers hedis scotty ];
 }
