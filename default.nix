@@ -13,5 +13,6 @@ in import "${pkgs.ihaskell}/release.nix" {
     raw-strings-qq
     generic-random
     graphviz
+    criterion
   ];
 }

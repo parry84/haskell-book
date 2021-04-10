@@ -4,6 +4,7 @@
 
 module Main where
 
+import           Control.Concurrent           (forkIO, threadDelay)
 import           Control.Exception
 import           Control.Monad                (forever)
 import           Data.ByteString              (ByteString)
@@ -19,34 +20,8 @@ import           Database.SQLite.Simple.Types
 import           Network.Socket               as NS hiding (recv)
 import           Network.Socket.ByteString    (recv, sendAll)
 import           Text.RawString.QQ
-import Control.Concurrent (forkIO, threadDelay)
 
-data User = User {
-  userId          :: Integer
-  , username      :: Text
-  , shell         :: Text
-  , homeDirectory :: Text
-  , realName      :: Text
-  , phone         :: Text
-  } deriving (Eq, Show)
-
-instance FromRow User where
-  fromRow = User <$> field
-    <*> field
-    <*> field
-    <*> field
-    <*> field
-    <*> field
-
-instance ToRow User where
-  toRow (User id_ username shell homeDir realName phone) = toRow (id_, username, shell, homeDir, realName, phone)
-
-data DuplicateData = DuplicateData
-  deriving (Eq, Show, Typeable)
-
-instance Exception DuplicateData
-
-type UserRow = (Null, Text, Text, Text, Text, Text)
+import           Lib
 
 createUsers :: Query
 createUsers = [r|
@@ -59,18 +34,9 @@ createUsers = [r|
   phone TEXT)
 |]
 
-insertUser :: Query
-insertUser =
-  "INSERT INTO users\
-  \ VALUES (?, ?, ?, ?, ?, ?)"
-
 allUsers :: Query
 allUsers =
   "SELECT * from users"
-
-getUserQuery :: Query
-getUserQuery =
-  "SELECT * from users where username = ?"
 
 getUser :: Connection -> Text -> IO (Maybe User)
 getUser conn username = do

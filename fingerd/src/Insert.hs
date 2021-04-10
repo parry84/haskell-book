@@ -21,41 +21,7 @@ import           Network.Socket.ByteString    (recv, sendAll)
 import           System.Environment
 import           Text.RawString.QQ
 
-data User = User {
-  userId          :: Integer
-  , username      :: Text
-  , shell         :: Text
-  , homeDirectory :: Text
-  , realName      :: Text
-  , phone         :: Text
-  } deriving (Eq, Show)
-
-instance FromRow User where
-  fromRow = User <$> field
-    <*> field
-    <*> field
-    <*> field
-    <*> field
-    <*> field
-
-instance ToRow User where
-  toRow (User id_ username shell homeDir realName phone) = toRow (id_, username, shell, homeDir, realName, phone)
-
-data DuplicateData = DuplicateData
-  deriving (Eq, Show, Typeable)
-
-instance Exception DuplicateData
-
-type UserRow = (Null, Text, Text, Text, Text, Text)
-
-getUserQuery :: Query
-getUserQuery =
-  "SELECT * from users where username = ?"
-
-insertUser :: Query
-insertUser =
-  "INSERT INTO users\
-  \ VALUES (?, ?, ?, ?, ?, ?)"
+import Lib
 
 updateUser :: Query
 updateUser = [r|
